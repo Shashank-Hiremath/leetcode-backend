@@ -1,4 +1,4 @@
-Leetcode backend
+# Leetcode backend
 
 1. Consumes code submissions from Kafka
 2. Processes and run them in a docker
@@ -8,3 +8,6 @@ Leetcode backend
 2. Compilation error. Send the error message
 3. Output not as expected. Return WA
 4. Passes all test cases. Return AC
+
+## Quick Run
+sh run.sh

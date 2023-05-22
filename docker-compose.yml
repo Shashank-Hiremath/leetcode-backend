@@ -1,0 +1,5 @@
+version: '3'
+services:
+  python_image:
+    image: python_image
+    build: ./programming_languages/python
