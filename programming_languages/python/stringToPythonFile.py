@@ -1,4 +1,4 @@
 import sys
 
-with open('/tmp/submissionFile.py', 'w') as submissionUpdatedFile:
-    submissionUpdatedFile.write(sys.argv[1])
+with open('submissionFile.py', 'w') as submissionFile:
+    submissionFile.write(sys.argv[1])

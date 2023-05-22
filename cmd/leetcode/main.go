@@ -23,8 +23,6 @@ func main() {
 
 	// err = c.EnsureImage("gcc")
 
-	// err = c.EnsureImage("golang")
-
 	if err = c.EnsureImage("python"); err != nil {
 		logger.Info("", zap.Error(err))
 		os.Exit(1)
@@ -39,7 +37,7 @@ func main() {
 	}
 
 	if createdNow != true {
-		logger.Info("Created a new volume as it wasn't already present")
+		logger.Info("Did not create a new volume as it was already present")
 	}
 
 	mounts := []container.VolumeMount{
@@ -54,9 +52,10 @@ func main() {
 	//factory pattern
 	//go process submissions
 
-	expectedOutput := "Hello111\napple\nball\nBye456\n"
-	submittedCode := "print('Hello111')\nfor line in ['apple', 'ball']:\n    print(line)\nprint('Bye456')"
-	statusCode, actualOutput, err := c.ContainerRunAndClean("python_image", []string{"sh", "runPython.sh", submittedCode}, mounts)
+	expectedOutput := "6 1 3"
+	submittedCode := "# import inbuilt standard input output\nfrom sys import stdin, stdout\n\nn = stdin.readline()\narr = [int(x) for x in stdin.readline().split()]\n\nsummation = 0\nfor num in arr:\n    summation += num\nminimum = min(arr)\nmaximum = max(arr)\nprint(summation, minimum, maximum)\n"
+	input := "3\n1 2 3"
+	statusCode, actualOutput, err := c.ContainerRunAndClean("python_image", []string{"sh", "runPython.sh", submittedCode, input}, mounts)
 	actualOutput = strings.ReplaceAll(actualOutput, "\r\n", "\n")
 	actualOutput = strings.TrimRight(actualOutput, "\n")
 	expectedOutput = strings.TrimRight(expectedOutput, "\n")
