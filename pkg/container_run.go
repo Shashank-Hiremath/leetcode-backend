@@ -3,6 +3,7 @@ package container
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -52,6 +53,8 @@ func (c *Controller) ContainerWait(id string) (state int64, err error) {
 		return 0, err
 	case result := <-resultC:
 		return result.StatusCode, nil
+	case <-time.After(1 * time.Second): //TODO:: Have language specific configurable timeouts
+		return 256, nil //Own defined statusCode
 	}
 }
 

@@ -4,4 +4,4 @@ WORKDIR /volume
 
 COPY stringToPythonFile.py /volume
 COPY stringToInputFile.py /volume
-COPY runPython.sh /volume
+COPY run_python.sh /volume
