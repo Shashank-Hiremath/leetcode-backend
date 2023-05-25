@@ -2,7 +2,10 @@ version: '3'
 services:
   cpp_image:
     image: "cpp_image"
-    build: ./programming_languages/cpp
-  # python_image:
-  #   image: python_image
-  #   build: ./programming_languages/python
+    build: ./internal/programming_languages/cpp
+  python_image:
+    image: python_image
+    build: ./internal/programming_languages/python
+  golang_image:
+    image: golang_image
+    build: ./internal/programming_languages/golang
