@@ -30,34 +30,101 @@ func main() {
 	}
 	ctx := &Context{logger, c}
 
-	// if err = c.EnsureImage("python_image"); err != nil {
-	// 	logger.Info("", zap.Error(err))
-	// 	os.Exit(1)
-	// }
-
 	createVolumes(ctx)
 	submissionsChan := make(chan submissions.Submission, configs.SUBMISSIONS_CHAN_BUFFER)
 	resultChan := make(chan submissions.Result, configs.SUBMISSIONS_CHAN_BUFFER)
 
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 3; i++ {
 		go worker(ctx, submissionsChan, resultChan)
 		go printResult(ctx, resultChan)
+		//TODO:: Return result to client
 	}
 
-	//go listen submissions
 	//TODO:: Listen to a message queue like kafka or RabbitMQ
 	for i := 0; 1 < 2; i++ {
-		submissionsChan <- *submissions.GetSubmissions()
-		time.Sleep(time.Millisecond * 100)
-		// ctx.logger.Info(fmt.Sprint("===", i))
-		// time.Sleep(10 * time.Minute)
+		// Print summation, min and max of array
+		submissionsChan <- submissions.Submission{
+			UserId:         "u2",
+			ProblemId:      "p1",
+			Language:       constants.PYTHON,
+			Code:           "# import inbuilt standard input output\nfrom sys import stdin, stdout\n\nn = stdin.readline()\narr = [int(x) for x in stdin.readline().split()]\n\nsummation = 0\nfor num in arr:\n    summation += num\nminimum = min(arr)\nmaximum = max(arr)\nprint(summation, minimum, maximum)\n",
+			Testcase:       "3\n1 2 3",
+			ExpectedOutput: "6 1 3",
+		}
+		time.Sleep(time.Millisecond * 200)
+
+		//CPP
+		submissionsChan <- submissions.Submission{
+			UserId:         "u2",
+			ProblemId:      "p1",
+			Language:       constants.CPP,
+			Code:           `#include<bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int n;\n    cin>>n;\n    int arr[n], i, mi=INT_MAX, ma = INT_MIN, sum=0;\n    for(i=0;i<n;i++){\n        cin>>arr[i];\n        mi = min(mi, arr[i]);\n        ma = max(ma, arr[i]);\n        sum += arr[i];\n    }\n    cout<<sum<<" "<<*min_element(arr, arr+n)<<" "<<ma<<"\\n";\n    return 0;\n}`,
+			Testcase:       "3\n1 2 3",
+			ExpectedOutput: "6 1 3",
+		}
+		time.Sleep(time.Millisecond * 200)
+
+		//Python Wrong answer
+		submissionsChan <- submissions.Submission{
+			UserId:         "u2",
+			ProblemId:      "p1",
+			Language:       constants.PYTHON,
+			Code:           "# import inbuilt standard input output\nfrom sys import stdin, stdout\n\nn = stdin.readline()\narr = [int(x) for x in stdin.readline().split()]\n\nsummation = 0\nfor num in arr:\n    summation += num\nminimum = min(arr)\nmaximum = max(arr)\nprint(summation, minimum, maximum+1)\n",
+			Testcase:       "3\n1 2 3",
+			ExpectedOutput: "6 1 3",
+		}
+		time.Sleep(time.Millisecond * 200)
+
+		//CPP Wrong answer
+		submissionsChan <- submissions.Submission{
+			UserId:         "u2",
+			ProblemId:      "p1",
+			Language:       constants.CPP,
+			Code:           `#include<bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int n;\n    cin>>n;\n    int arr[n], i, mi=INT_MAX, ma = INT_MIN, sum=0;\n    for(i=0;i<n;i++){\n        cin>>arr[i];\n        mi = min(mi, arr[i]);\n        ma = max(ma, arr[i]);\n        sum += arr[i];\n    }\n    cout<<sum<<" "<<*min_element(arr, arr+n)<<" "<<ma+1<<"\\n";\n    return 0;\n}`,
+			Testcase:       "3\n1 2 3",
+			ExpectedOutput: "6 1 3",
+		}
+		time.Sleep(time.Millisecond * 200)
+
+		//CPP Compilation error
+		submissionsChan <- submissions.Submission{
+			UserId:         "u2",
+			ProblemId:      "p1",
+			Language:       constants.CPP,
+			Code:           `#exclude<bits/stdc++.h>\nusing namespace std;\n\nint main(){\n    int n;\n    cin>>n;\n    int arr[n], i, mi=INT_MAX, ma = INT_MIN, sum=0;\n    for(i=0;i<n;i++){\n        cin>>arr[i];\n        mi = min(mi, arr[i]);\n        ma = max(ma, arr[i]);\n        sum += arr[i];\n    }\n    cout<<sum<<" "<<*min_element(arr, arr+n)<<" "<<ma+1<<"\\n";\n    return 0;\n}`,
+			Testcase:       "3\n1 2 3",
+			ExpectedOutput: "6 1 3",
+		}
+		time.Sleep(time.Millisecond * 200)
+
+		//Python Compilation error
+		submissionsChan <- submissions.Submission{
+			UserId:         "u2",
+			ProblemId:      "p1",
+			Language:       constants.PYTHON,
+			Code:           "# import inbuilt standard input output\nfrom sys export stdin, stdout\n\nn = stdin.readline()\narr = [int(x) for x in stdin.readline().split()]\n\nsummation = 0\nfor num in arr:\n    summation += num\nminimum = min(arr)\nmaximum = max(arr)\nprint(summation, minimum, maximum+1)\n",
+			Testcase:       "3\n1 2 3",
+			ExpectedOutput: "6 1 3",
+		}
+		time.Sleep(time.Millisecond * 200)
+
+		// //Golang Wrong Answer
+		// submissionsChan <- submissions.Submission{
+		// 	UserId:    "u2",
+		// 	ProblemId: "p1",
+		// 	Language:  constants.GOLANG,
+		// 	Code:      `package main\n\nimport (\n\t"fmt"\n\t"math"\n)\n\nfunc main() {\n\tvar n int\n\tmi := math.MaxInt\n\tma := math.MinInt\n\tsum := 0\n\tfmt.Scanln(&n)\n\tarr := make([]int, n)\n\tfor i := 0; i < n; i++ {\n\t\tfmt.Scanf("%d", &arr[i])\n\t\tif arr[i] < mi {\n\t\t\tmi = arr[i]\n\t\t}\n\t\tif arr[i] > ma {\n\t\t\tma = arr[i]\n\t\t}\n\t\tsum += arr[i]\n\t}\n\tfmt.Printf("%d %d %d\\n", sum, mi, ma)\n}\n`,
+		// 	// Code:           `package main\n\nimport (\n\t"fmt"\n)\n\nfunc main() {\n\tfmt.Printf("Hello World\\n")\n}\n`,
+		// 	Testcase:       "3\n1 2 3",
+		// 	ExpectedOutput: "6 1 3",
+		// }
+		// time.Sleep(time.Millisecond * 200)
 	}
 }
 
 func printResult(ctx *Context, resultChan chan submissions.Result) {
 	for result := range resultChan {
-		ctx.logger.Info(result.VerdictMessage + "\n")
-		ctx.logger.Info(result.ErrorMessage + "\n")
+		ctx.logger.Info(result.VerdictMessage + ": " + result.ErrorMessage)
 	}
 }
 
@@ -113,7 +180,7 @@ func getVerdictAndErrorMessage(ctx *Context, submission submissions.Submission, 
 	actualOutput = strings.TrimRight(actualOutput, "\n")
 	expectedOutput := strings.TrimRight(submission.ExpectedOutput, "\n")
 	if strings.Compare(actualOutput, expectedOutput) != 0 {
-		return "WA", submissions.WA
+		return "WA", actualOutput
 	}
-	return "AC", submissions.AC //TODO::BUG:: 2nd value should not be sent as errorMessage, should be empty
+	return "AC", ""
 }

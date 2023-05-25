@@ -1,6 +1,5 @@
 FROM gcc:4.9
 
-WORKDIR /volume
+WORKDIR /cpp_volume
 
-COPY stringToCppFile.cpp /volume
-COPY run_cpp.sh /volume
+COPY run_cpp.sh /cpp_volume
